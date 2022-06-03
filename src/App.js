@@ -29,14 +29,14 @@ function App() {
   };
 
   const searchedStories = stories.filter((story) =>
-    story.title.includes(searchTerm)
+    story.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
     <div>
       <h1>My Hacker Stories</h1>
 
-      <Search onSearch={handleSearch} />
+      <Search onSearch={handleSearch} search={searchTerm} />
 
       <hr />
       <List list={searchedStories} />
