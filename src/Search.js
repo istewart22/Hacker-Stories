@@ -1,8 +1,8 @@
-const Search = () => {
+const Search = ({ onSearch }) => {
   return (
     <div>
       <label htmlFor='search'>Search: </label>
-      <input id='search' type='text' />
+      <input id='search' type='text' onChange={onSearch} />
     </div>
   );
 };
