@@ -39,10 +39,13 @@ function App() {
 
   const [searchTerm, setSearchTerm] = useStorageState('search', '');
   const [stories, setStories] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    setIsLoading(true);
     getAsyncStories().then((result) => {
       setStories(result.data.stories);
+      setIsLoading(false);
     });
   }, []);
 
@@ -75,7 +78,12 @@ function App() {
       </InputWithLabel>
 
       <hr />
-      <List list={searchedStories} onDelete={onDelete} />
+
+      {isLoading ? (
+        <p>Loading ...</p>
+      ) : (
+        <List list={searchedStories} onDelete={onDelete} />
+      )}
     </div>
   );
 }
