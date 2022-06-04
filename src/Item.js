@@ -1,4 +1,4 @@
-const Item = ({ item }) => {
+const Item = ({ item, onDelete }) => {
   return (
     <li>
       <span>
@@ -7,6 +7,7 @@ const Item = ({ item }) => {
       <span>{item.author}</span>
       <span>{item.num_comments}</span>
       <span>{item.points}</span>
+      <button onClick={() => onDelete(item)}>Delete</button>
     </li>
   );
 };

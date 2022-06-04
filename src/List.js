@@ -1,10 +1,10 @@
 import Item from './Item';
 
-const List = ({ list }) => {
+const List = ({ list, onDelete }) => {
   return (
     <ul>
       {list.map((item) => (
-        <Item key={item.objectID} item={item} />
+        <Item key={item.objectID} item={item} onDelete={onDelete} />
       ))}
     </ul>
   );
