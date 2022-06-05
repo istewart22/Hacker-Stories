@@ -2,6 +2,8 @@ import List from './List';
 import InputWithLabel from './InputWithLabel';
 import { useEffect, useReducer, useState } from 'react';
 
+const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query=';
+
 const useStorageState = (key, initialState) => {
   const [value, setValue] = useState(localStorage.getItem(key) || initialState);
 
@@ -13,30 +15,6 @@ const useStorageState = (key, initialState) => {
 };
 
 function App() {
-  const initialStories = [
-    {
-      title: 'React',
-      url: 'https://reactjs.org/',
-      author: 'Jordan Walke',
-      num_comments: 3,
-      points: 4,
-      objectID: 0,
-    },
-    {
-      title: 'Redux',
-      url: 'https://redux.js.org/',
-      author: 'Dan Abramov, Andrew Clark',
-      num_comments: 2,
-      points: 5,
-      objectID: 1,
-    },
-  ];
-
-  const getAsyncStories = () =>
-    new Promise((resolve) =>
-      setTimeout(() => resolve({ data: { stories: initialStories } }), 500)
-    );
-
   const [searchTerm, setSearchTerm] = useStorageState('search', '');
 
   const storiesReducer = (state, action) => {
@@ -79,16 +57,19 @@ function App() {
   });
 
   useEffect(() => {
+    if (!searchTerm) return;
+
     dispatchStories({ type: 'STORIES_FETCH_INIT' });
-    getAsyncStories()
+    fetch(`${API_ENDPOINT}${searchTerm}`)
+      .then((response) => response.json())
       .then((result) => {
         dispatchStories({
           type: 'STORIES_FETCH_SUCCESS',
-          payload: result.data.stories,
+          payload: result.hits,
         });
       })
       .catch(() => dispatchStories({ type: 'STORIES_FETCH_FAILURE' }));
-  }, []);
+  }, [searchTerm]);
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
@@ -100,10 +81,6 @@ function App() {
       payload: item,
     });
   };
-
-  const searchedStories = stories.data.filter((story) =>
-    story.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   return (
     <div>
@@ -124,7 +101,7 @@ function App() {
       {stories.isLoading ? (
         <p>Loading ...</p>
       ) : (
-        <List list={searchedStories} onDelete={onDelete} />
+        <List list={stories.data} onDelete={onDelete} />
       )}
     </div>
   );
