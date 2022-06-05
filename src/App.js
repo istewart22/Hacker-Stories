@@ -1,6 +1,6 @@
 import List from './List';
 import InputWithLabel from './InputWithLabel';
-import { useEffect, useState } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 
 const useStorageState = (key, initialState) => {
   const [value, setValue] = useState(localStorage.getItem(key) || initialState);
@@ -38,15 +38,35 @@ function App() {
     );
 
   const [searchTerm, setSearchTerm] = useStorageState('search', '');
-  const [stories, setStories] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
+
+  const storiesReducer = (state, action) => {
+    switch (action.type) {
+      case 'SET_STORIES':
+        return action.payload;
+      case 'REMOVE_STORY':
+        return state.filter(
+          (story) => action.payload.objectID !== story.objectID
+        );
+      default:
+        throw new Error();
+    }
+  };
+
+  const [stories, dispatchStories] = useReducer(storiesReducer, []);
 
   useEffect(() => {
     setIsLoading(true);
-    getAsyncStories().then((result) => {
-      setStories(result.data.stories);
-      setIsLoading(false);
-    });
+    getAsyncStories()
+      .then((result) => {
+        dispatchStories({
+          type: 'SET_STORIES',
+          payload: result.data.stories,
+        });
+        setIsLoading(false);
+      })
+      .catch(() => setIsError(true));
   }, []);
 
   const handleSearch = (event) => {
@@ -54,11 +74,10 @@ function App() {
   };
 
   const onDelete = (item) => {
-    const newStories = stories.filter(
-      (story) => story.objectID !== item.objectID
-    );
-
-    setStories(newStories);
+    dispatchStories({
+      type: 'REMOVE_STORY',
+      payload: item,
+    });
   };
 
   const searchedStories = stories.filter((story) =>
@@ -78,6 +97,8 @@ function App() {
       </InputWithLabel>
 
       <hr />
+
+      {isError && <p>Something went wrong ...</p>}
 
       {isLoading ? (
         <p>Loading ...</p>
