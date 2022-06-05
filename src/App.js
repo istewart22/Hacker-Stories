@@ -16,6 +16,7 @@ const useStorageState = (key, initialState) => {
 
 function App() {
   const [searchTerm, setSearchTerm] = useStorageState('search', '');
+  const [url, setUrl] = useState(`${API_ENDPOINT}${searchTerm}`);
 
   const storiesReducer = (state, action) => {
     switch (action.type) {
@@ -60,7 +61,7 @@ function App() {
     if (!searchTerm) return;
 
     dispatchStories({ type: 'STORIES_FETCH_INIT' });
-    fetch(`${API_ENDPOINT}${searchTerm}`)
+    fetch(url)
       .then((response) => response.json())
       .then((result) => {
         dispatchStories({
@@ -69,10 +70,14 @@ function App() {
         });
       })
       .catch(() => dispatchStories({ type: 'STORIES_FETCH_FAILURE' }));
-  }, [searchTerm]);
+  }, [url]);
 
-  const handleSearch = (event) => {
+  const handleSearchInput = (event) => {
     setSearchTerm(event.target.value);
+  };
+
+  const handleSearchSubmit = () => {
+    setUrl(`${API_ENDPOINT}${searchTerm}`);
   };
 
   const onDelete = (item) => {
@@ -89,10 +94,14 @@ function App() {
       <InputWithLabel
         id='search'
         value={searchTerm}
-        onInputChange={handleSearch}
+        onInputChange={handleSearchInput}
       >
         Search:
       </InputWithLabel>
+
+      <button type='button' disabled={!searchTerm} onClick={handleSearchSubmit}>
+        Submit
+      </button>
 
       <hr />
 
