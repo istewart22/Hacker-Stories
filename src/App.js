@@ -2,6 +2,7 @@ import List from './List';
 import InputWithLabel from './InputWithLabel';
 import { useEffect, useReducer, useState } from 'react';
 import axios from 'axios';
+import './App.css';
 
 const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query=';
 
@@ -89,22 +90,22 @@ function App() {
   };
 
   return (
-    <div>
-      <h1>My Hacker Stories</h1>
+    <div className='container'>
+      <h1 className='headline-primary'>My Hacker Stories</h1>
 
-      <InputWithLabel
-        id='search'
-        value={searchTerm}
-        onInputChange={handleSearchInput}
-      >
-        Search:
-      </InputWithLabel>
+      <form onSubmit={handleSearchSubmit} className='search-form'>
+        <InputWithLabel
+          id='search'
+          value={searchTerm}
+          onInputChange={handleSearchInput}
+        >
+          Search:
+        </InputWithLabel>
 
-      <button type='button' disabled={!searchTerm} onClick={handleSearchSubmit}>
-        Submit
-      </button>
-
-      <hr />
+        <button type='button' disabled={!searchTerm} className='button'>
+          Submit
+        </button>
+      </form>
 
       {stories.isError && <p>Something went wrong ...</p>}
 

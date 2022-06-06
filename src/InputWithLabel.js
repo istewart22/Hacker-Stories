@@ -6,9 +6,17 @@ const InputWithLabel = ({
   children,
 }) => (
   <>
-    <label htmlFor={id}>{children}</label>
+    <label htmlFor={id} className='label'>
+      {children}
+    </label>
     &nbsp;
-    <input id={id} type={type} value={value} onChange={onInputChange} />
+    <input
+      id={id}
+      type={type}
+      value={value}
+      onChange={onInputChange}
+      className='input'
+    />
   </>
 );
 
