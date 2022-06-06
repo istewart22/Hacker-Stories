@@ -1,3 +1,5 @@
+import './InputWithLabel.css';
+
 const InputWithLabel = ({
   id,
   value,

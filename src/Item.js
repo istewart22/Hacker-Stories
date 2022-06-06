@@ -1,4 +1,4 @@
-import './App.css';
+import './Item.css';
 
 const Item = ({ item, onDelete }) => {
   return (
